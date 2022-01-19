@@ -53,7 +53,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
 	const connectionRef= useRef()
 
 	useEffect(() => {
-		navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then((stream) => {
+		navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
 			setStream(stream)
         console.log(stream);
 				myVideo.current.srcObject = stream
@@ -64,7 +64,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
 	}, [])
 
   useEffect(() => {
-    webSocket.current = new WebSocket("ws://cognomelt5:9000");
+    webSocket.current = new WebSocket("ws://192.168.199.83:9001");
     webSocket.current.onmessage = message => {
       const data = JSON.parse(message.data);
       setSocketMessages(prev => [...prev, data]);
@@ -190,6 +190,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
 
 
       localConnection.ontrack = (event) => {
+        console.log("Events object is ", event)
         event.streams[0].getTracks().forEach((track) => {
           remoteStream.addTrack(track);
         });
@@ -199,11 +200,14 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
       updateConnection(localConnection);
       userVideo.current.srcObject = remoteStream;
       //setting my video from stream
-      stream.getTracks().forEach( track => {
-        localConnection.addTrack(track , stream);
-      })
+      if(stream && stream.getTracks()){
+        stream.getTracks().forEach( track => {
+          localConnection.addTrack(track , stream);
+        })
+      }
+     
 
-      console.log("Local stream ", stream?.id)
+      console.log("Local stream ", stream)
       console.log("Remote stream ", remoteStream?.id)
 
     } else {
