@@ -53,7 +53,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
 	const connectionRef= useRef()
 
 	useEffect(() => {
-		navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+		navigator.mediaDevices.getUserMedia({video:true, audio: true }).then((stream) => {
 			setStream(stream)
         console.log(stream);
 				myVideo.current.srcObject = stream
@@ -64,7 +64,7 @@ const Chat = ({ connection, updateConnection, channel, updateChannel }) => {
 	}, [])
 
   useEffect(() => {
-    webSocket.current = new WebSocket("ws://192.168.199.83:9001");
+    webSocket.current = new WebSocket("ws://localhost:9001");
     webSocket.current.onmessage = message => {
       const data = JSON.parse(message.data);
       setSocketMessages(prev => [...prev, data]);
